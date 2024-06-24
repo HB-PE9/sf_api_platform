@@ -18,9 +18,39 @@ class AppFixtures extends Fixture
         "test@test.com" => "test"
     ];
 
-    private const CATEGORIES = ["NextJS", "Rust", "WebAssembly", "PHP", "Symfony"];
+    private const CATEGORIES = [
+        "Languages" => [
+            "PHP" => [
+                "Superglobals" => [
+                    '$_GET',
+                    '$_POST',
+                    '$_FILES',
+                ],
+                "File upload",
+                "Arrays"
+            ],
+            "Rust" => [
+                "Compilation",
+                "Ownership",
+                "Cargo",
+                "Modules"
+            ],
+            "JS" => [
+                "Closures",
+                "Arrow functions",
+                "ES6"
+            ]
+        ],
+        "Frameworks" => [
+            "NextJS",
+            "Symfony",
+            "Laravel"
+        ]
+    ];
 
     private const NB_ARTICLES = 50;
+
+    private array $categories = [];
 
     public function load(ObjectManager $manager): void
     {
@@ -42,15 +72,19 @@ class AppFixtures extends Fixture
             $users[] = $user;
         }
 
-        $categories = [];
+        $this->loadCategories($manager, null, self::CATEGORIES);
 
-        foreach (self::CATEGORIES as $catName) {
-            $category = new Category();
-            $category->setName($catName);
+        // foreach (self::CATEGORIES as $parent => $children) {
+        //     $category = new Category();
+        //     $category->setName($parent);
 
-            $manager->persist($category);
-            $categories[] = $category;
-        }
+        //     $manager->persist($category);
+        //     $categories[] = $category;
+
+        //     foreach ($children as $child => $subChildren) {
+
+        //     }
+        // }
 
         for ($i = 0; $i < self::NB_ARTICLES; $i++) {
             $article = new Article();
@@ -61,11 +95,30 @@ class AppFixtures extends Fixture
                 ->setVisible($faker->boolean(70))
                 ->setCreatedAt($faker->dateTimeBetween('-4 years'))
                 ->setAuthor($faker->randomElement($users))
-                ->setCategory($faker->randomElement($categories));
+                ->setCategory($faker->randomElement($this->categories));
 
             $manager->persist($article);
         }
 
         $manager->flush();
+    }
+
+    private function loadCategories(ObjectManager $manager, ?Category $parentCategory, array $categories)
+    {
+        foreach ($categories as $key => $val) {
+            $recursive = is_array($val);
+            $categoryName = $recursive ? $key : $val;
+
+            $category = new Category();
+            $category
+                ->setName($categoryName)
+                ->setParent($parentCategory);
+            $manager->persist($category);
+            $this->categories[] = $category;
+
+            if ($recursive) {
+                $this->loadCategories($manager, $category, $val);
+            }
+        }
     }
 }
