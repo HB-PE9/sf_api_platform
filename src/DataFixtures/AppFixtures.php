@@ -4,6 +4,8 @@ namespace App\DataFixtures;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Entity\Client;
+use App\Entity\Employee;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -71,6 +73,25 @@ class AppFixtures extends Fixture
             $manager->persist($user);
             $users[] = $user;
         }
+
+        $client = new Client();
+
+        $client
+            ->setEmail("client@gmail.com")
+            ->setPassword("client")
+            ->setClientNumber("CLI32189654")
+            ->setPremium($faker->boolean());
+
+        $manager->persist($client);
+
+        $emp = new Employee();
+
+        $emp
+            ->setEmail("emp@gmail.com")
+            ->setPassword("emp")
+            ->setEmpNumber("EMP11424");
+
+        $manager->persist($emp);
 
         $this->loadCategories($manager, null, self::CATEGORIES);
 
