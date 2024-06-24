@@ -74,18 +74,6 @@ class AppFixtures extends Fixture
 
         $this->loadCategories($manager, null, self::CATEGORIES);
 
-        // foreach (self::CATEGORIES as $parent => $children) {
-        //     $category = new Category();
-        //     $category->setName($parent);
-
-        //     $manager->persist($category);
-        //     $categories[] = $category;
-
-        //     foreach ($children as $child => $subChildren) {
-
-        //     }
-        // }
-
         for ($i = 0; $i < self::NB_ARTICLES; $i++) {
             $article = new Article();
 
