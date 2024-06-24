@@ -9,7 +9,7 @@ use Doctrine\ORM\Events;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsDoctrineListener(Events::prePersist)]
-class HasUserPasswordListener
+class HashUserPasswordListener
 {
     public function __construct(
         private UserPasswordHasherInterface $hasher
